@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -10,6 +11,7 @@ class RegistrationPage extends StatefulWidget {
 class _RegistrationPageState extends State<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
+  final _firstNameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -21,6 +23,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   void dispose() {
     _fullNameController.dispose();
+    _firstNameController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -33,6 +36,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
     }
     if (value.length < 3) {
       return 'Le nom doit contenir au moins 3 caractères';
+    }
+    return null;
+  }
+
+  String? _validateFirstName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Veuillez entrer votre prénom';
+    }
+    if (value.length < 2) {
+      return 'Le prénom doit contenir au moins 2 caractères';
     }
     return null;
   }
@@ -86,20 +99,46 @@ class _RegistrationPageState extends State<RegistrationPage> {
         _isLoading = true;
       });
 
-      await Future.delayed(const Duration(seconds: 2));
+      final result = await AuthService.register(
+        prenom: _firstNameController.text.trim(),
+        name: _fullNameController.text.trim(),
+        telephone: _phoneController.text.trim(),
+        password: _passwordController.text,
+        passwordConfirmation: _confirmPasswordController.text,
+      );
 
       setState(() {
         _isLoading = false;
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Compte créé avec succès!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.pop(context);
+        if (result['success']) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Compte créé avec succès!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context);
+        } else {
+          String errorMessage = result['error'] ?? 'Une erreur est survenue';
+          
+          // Si des erreurs de validation spécifiques sont retournées
+          if (result['errors'] != null && result['errors'].isNotEmpty) {
+            final errors = result['errors'] as Map<String, dynamic>;
+            final firstError = errors.values.first;
+            if (firstError is List && firstError.isNotEmpty) {
+              errorMessage = firstError.first.toString();
+            }
+          }
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }
@@ -135,7 +174,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Rejoignez FarmerTransfer pour des transferts d\'argent faciles',
+                  'Rejoignez Push Planteur pour des transferts d\'argent faciles',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
@@ -148,6 +187,22 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   decoration: InputDecoration(
                     labelText: 'Nom complet',
                     prefixIcon: const Icon(Icons.person, color: Color(0xFF2E7D32)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFF2E7D32), width: 2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _firstNameController,
+                  validator: _validateFirstName,
+                  decoration: InputDecoration(
+                    labelText: 'Prénom',
+                    prefixIcon: const Icon(Icons.person_outline, color: Color(0xFF2E7D32)),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

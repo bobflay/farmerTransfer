@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -47,19 +49,66 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = true;
       });
 
-      await Future.delayed(const Duration(seconds: 2));
+      final result = await AuthService.login(
+        telephone: _phoneController.text.trim(),
+        password: _passwordController.text,
+      );
 
       setState(() {
         _isLoading = false;
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Connexion réussie!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        print('🏠 Résultat de la connexion dans LoginPage: $result');
+        
+        if (result['success']) {
+          print('✅ Connexion réussie, navigation vers HomePage');
+          print('📊 Données à passer à HomePage: ${result['data']}');
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Connexion réussie!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          
+          try {
+            // Naviguer vers la page d'accueil avec les données utilisateur
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(userData: result['data']),
+              ),
+            );
+          } catch (e) {
+            print('💥 Erreur lors de la navigation vers HomePage: $e');
+            print('📋 Stack trace: ${StackTrace.current}');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Erreur lors de la navigation: $e'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        } else {
+          String errorMessage = result['error'] ?? 'Identifiants incorrects';
+          
+          // Si des erreurs de validation spécifiques sont retournées
+          if (result['errors'] != null && result['errors'].isNotEmpty) {
+            final errors = result['errors'] as Map<String, dynamic>;
+            final firstError = errors.values.first;
+            if (firstError is List && firstError.isNotEmpty) {
+              errorMessage = firstError.first.toString();
+            }
+          }
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }
@@ -95,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Connectez-vous à votre compte FarmerTransfer',
+                  'Connectez-vous à votre compte Push Planteur',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey,

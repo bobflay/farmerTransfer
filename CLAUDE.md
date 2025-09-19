@@ -49,3 +49,5 @@ This is a standard Flutter project created with `flutter create`. It follows Flu
 - Linting configured via `analysis_options.yaml` using `package:flutter_lints/flutter.yaml`
 - Widget tests located in `test/widget_test.dart`
 - Follows Flutter's recommended coding patterns and Material Design guidelines
+
+

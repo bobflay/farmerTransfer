@@ -4,16 +4,16 @@ import 'pages/login_page.dart';
 import 'pages/registration_page.dart';
 
 void main() {
-  runApp(const FarmerTransferApp());
+  runApp(const PushPlanteurApp());
 }
 
-class FarmerTransferApp extends StatelessWidget {
-  const FarmerTransferApp({super.key});
+class PushPlanteurApp extends StatelessWidget {
+  const PushPlanteurApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'FarmerTransfer',
+      title: 'Push Planteur',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2E7D32)),

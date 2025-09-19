@@ -23,14 +23,25 @@ class LandingPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Spacer(),
-                Icon(
-                  Icons.agriculture,
-                  size: 100,
-                  color: Colors.white,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.agriculture,
+                      size: 80,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 16),
+                    Icon(
+                      Icons.person,
+                      size: 80,
+                      color: Colors.white,
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 24),
                 const Text(
-                  'FarmerTransfer',
+                  'Push Planteur',
                   style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
