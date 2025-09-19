@@ -144,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Connectez-vous à votre compte Push Planteur',
+                  'Gérer votre argent',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey,

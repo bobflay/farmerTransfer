@@ -206,7 +206,8 @@ class _AmountPageState extends State<AmountPage> {
         ),
       );
       // Retourner à la page d'accueil
-      Navigator.of(context).popUntil((route) => route.isFirst);
+      Navigator.of(context).pop(); // Fermer la page amount
+      Navigator.of(context).pop(); // Fermer la page transfer
     }
   }
 
