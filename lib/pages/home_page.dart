@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'transfer_page.dart';
 
 class HomePage extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -10,7 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Map<String, dynamic>> transactions = [
+  List<Map<String, dynamic>> transactions = [
     {
       'type': 'send',
       'amount': 5000,
@@ -33,6 +34,12 @@ class _HomePageState extends State<HomePage> {
       'status': 'completed'
     },
   ];
+
+  void _addTransaction(Map<String, dynamic> newTransaction) {
+    setState(() {
+      transactions.insert(0, newTransaction); // Ajouter en premier
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +88,7 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
+                  colors: [Color(0xFFFF8C00), Color(0xFFFF6347)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -178,11 +185,13 @@ class _HomePageState extends State<HomePage> {
               height: 56,
               child: ElevatedButton(
                 onPressed: () {
-                  // TODO: Naviguer vers la page de transfert
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Fonctionnalité de transfert à venir'),
-                      backgroundColor: Color(0xFF2E7D32),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TransferPage(
+                        userData: widget.userData,
+                        onTransactionCompleted: _addTransaction,
+                      ),
                     ),
                   );
                 },
